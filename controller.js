@@ -19,7 +19,7 @@ exports.addImages = (req, res) => {
 };
 
 exports.selectRandom = (req, res) => {
-  let sql = `SELECT * FROM images
+  let sql = `SELECT * FROM images INNER JOIN user ON images.user_id=user.user_id WHERE category='${req.body.category}'
   ORDER BY RAND()
   LIMIT 2 
   `;
@@ -40,9 +40,44 @@ exports.selectRandom = (req, res) => {
 exports.vote = (req, res) => {
   let sql = `UPDATE images
   SET votes = votes+1
-  WHERE uid=${req.body.uid}`;
+  WHERE image_id=${req.body.image_id}`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere 2", Error: err });
+    res.json(result);
+  });
+};
+
+exports.category = (req, res) => {
+  let sql = `SELECT category, count(category)
+  FROM images
+  WHERE category is not null
+  GROUP BY category`;
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ error: "Error everywhere 3", Error: err });
+    let s = JSON.stringify(result);
+    let r = [];
+    let j = JSON.parse(s);
+    c = j[1]["count(category)"];
+    console.log(j);
+    // c.map(x=>)
+    r = j.filter((x) => x["count(category)"] > 20);
+    res.json(r);
+  });
+};
+
+exports.leaderboard = (req, res) => {
+  let sql = `SELECT *
+  FROM images ORDER BY votes DESC LIMIT 10 OFFSET ${req.body.offset}`;
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ error: "Error everywhere 4", Error: err });
+    res.json(result);
+  });
+};
+
+exports.profile = (req, res) => {
+  let sql = `SELECT * FROM user INNER JOIN images ON user.user_id=images.user_id`;
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ error: "Error everywhere 5", Error: err });
     res.json(result);
   });
 };
