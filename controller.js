@@ -1,4 +1,5 @@
 const db = require("./db");
+var jwt = require("jsonwebtoken");
 
 exports.addImages = (req, res) => {
   let sql = `INSERT INTO images (url,category) VALUES(?,?)`;
@@ -15,6 +16,28 @@ exports.addImages = (req, res) => {
       c = j[0]["COUNT(url)"];
       res.json({ count: c });
     });
+  });
+};
+
+exports.login = (req, res) => {
+  let sql = `SELECT user_id,name,email FROM user WHERE email=? AND pass=?`;
+  db.query(sql, [req.body.email, req.body.password], (err, result) => {
+    if (err) return res.json({ error: "Login error" });
+    if (result.length < 1) {
+      return res.json({ err: "Login failed" });
+    }
+    const token = jwt.sign(
+      {
+        email: result[0].email,
+        user_id: result[0].user_id,
+      },
+      "rating",
+      {
+        expiresIn: "1h",
+      }
+    );
+    result[0]["token"] = token;
+    res.json(result[0]);
   });
 };
 
@@ -76,6 +99,14 @@ exports.leaderboard = (req, res) => {
 
 exports.profile = (req, res) => {
   let sql = `SELECT * FROM user INNER JOIN images ON user.user_id=images.user_id`;
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ error: "Error everywhere 5", Error: err });
+    res.json(result);
+  });
+};
+
+exports.profilePosts = (req, res) => {
+  let sql = `SELECT * FROM images WHERE user_id=${req.body.user_id}`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere 5", Error: err });
     res.json(result);

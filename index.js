@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const isLoggedIn = require("./auth");
 const {
   addImages,
   selectRandom,
@@ -8,6 +9,8 @@ const {
   category,
   leaderboard,
   profile,
+  profilePosts,
+  login,
 } = require("./controller");
 
 const app = express();
@@ -18,12 +21,14 @@ app.use(bodyParser.json());
 app.get("/", (req, res) => {
   res.send("Hello Raters!");
 });
+app.post("/login", login);
 app.post("/addImages", addImages);
-app.post("/random", selectRandom);
-app.post("/vote", vote);
-app.get("/category", category);
-app.post("/leaderboard", leaderboard);
-app.get("/profile", profile);
+app.post("/random", isLoggedIn, selectRandom);
+app.post("/vote", isLoggedIn, vote);
+app.get("/category", isLoggedIn, category);
+app.post("/leaderboard", isLoggedIn, leaderboard);
+app.get("/profile", isLoggedIn, profile);
+app.post("/profilePosts", isLoggedIn, profilePosts);
 
 app.listen(port, () => {
   console.log(`Rating-backend listening at http://localhost:${port}`);
