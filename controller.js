@@ -21,7 +21,7 @@ exports.addImages = (req, res) => {
 
 exports.login = (req, res) => {
   let sql = `SELECT user_id,name,email FROM user WHERE email=? AND pass=?`;
-  db.query(sql, [req.body.email, req.body.password], (err, result) => {
+  db.query(sql, [req.body.email, req.body.pass], (err, result) => {
     if (err) return res.json({ error: "Login error" });
     if (result.length < 1) {
       return res.json({ err: "Login failed" });
@@ -31,10 +31,7 @@ exports.login = (req, res) => {
         email: result[0].email,
         user_id: result[0].user_id,
       },
-      "rating",
-      {
-        expiresIn: "1h",
-      }
+      "rating"
     );
     result[0]["token"] = token;
     res.json(result[0]);
@@ -71,7 +68,7 @@ exports.vote = (req, res) => {
 };
 
 exports.category = (req, res) => {
-  let sql = `SELECT category, count(category)
+  let sql = `SELECT url,category, count(category)
   FROM images
   WHERE category is not null
   GROUP BY category`;
@@ -90,7 +87,7 @@ exports.category = (req, res) => {
 
 exports.leaderboard = (req, res) => {
   let sql = `SELECT *
-  FROM images ORDER BY votes DESC LIMIT 10 OFFSET ${req.body.offset}`;
+  FROM images ORDER BY votes DESC LIMIT 5 OFFSET ${req.body.offset}`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere 4", Error: err });
     res.json(result);
@@ -109,6 +106,14 @@ exports.profilePosts = (req, res) => {
   let sql = `SELECT * FROM images WHERE user_id=${req.body.user_id}`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere 5", Error: err });
+    res.json(result);
+  });
+};
+
+exports.explore = (req, res) => {
+  let sql = `SELECT image_id,user.user_id,url,votes,description,date,category,name FROM images INNER JOIN user ON user.user_id=images.user_id ORDER BY RAND()`;
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ error: "Error everywhere 6", Error: err });
     res.json(result);
   });
 };

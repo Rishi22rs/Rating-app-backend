@@ -11,6 +11,7 @@ const {
   profile,
   profilePosts,
   login,
+  explore,
 } = require("./controller");
 
 const app = express();
@@ -29,6 +30,7 @@ app.get("/category", isLoggedIn, category);
 app.post("/leaderboard", isLoggedIn, leaderboard);
 app.get("/profile", isLoggedIn, profile);
 app.post("/profilePosts", isLoggedIn, profilePosts);
+app.get("/explore", isLoggedIn, explore);
 
 app.listen(port, () => {
   console.log(`Rating-backend listening at http://localhost:${port}`);
