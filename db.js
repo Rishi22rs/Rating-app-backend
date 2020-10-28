@@ -1,12 +1,12 @@
 var mysql = require("mysql");
 
-// var db = mysql.createConnection({
-//   host: "localhost",
-//   port: 3306,
-//   user: "id15022642_ratepics",
-//   database: "id15022642_rate",
-//   password: "CnlKKN{zh71^wn%h",
-// });
+var db = mysql.createConnection({
+  host: "db4free.net",
+  port: 3306,
+  user: "ratingpics",
+  database: "rating",
+  password: "ratingapp",
+});
 
 // var db = mysql.createConnection({
 //   host: "localhost",
@@ -16,13 +16,13 @@ var mysql = require("mysql");
 //   password: "teamGeny123RandomPassword",
 // });
 
-var db = mysql.createConnection({
-  host: "localhost",
-  port: 3306,
-  user: "root",
-  database: "rating",
-  password: "",
-});
+// var db = mysql.createConnection({
+//   host: "localhost",
+//   port: 3306,
+//   user: "root",
+//   database: "rating",
+//   password: "",
+// });
 
 db.connect(function (err) {
   if (err) throw err;
