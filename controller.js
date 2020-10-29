@@ -20,8 +20,9 @@ exports.addImages = (req, res) => {
 };
 
 exports.login = (req, res) => {
+  console.log(req.body.email, req.body.password);
   let sql = `SELECT user_id,name,email FROM user WHERE email=? AND pass=?`;
-  db.query(sql, [req.body.email, req.body.pass], (err, result) => {
+  db.query(sql, [req.body.email, req.body.password], (err, result) => {
     if (err) return res.json({ error: "Login error" });
     if (result.length < 1) {
       return res.json({ err: "Login failed" });
