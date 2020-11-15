@@ -69,26 +69,24 @@ exports.vote = (req, res) => {
 };
 
 exports.category = (req, res) => {
-  let sql = `SELECT url,category, count(category)
-  FROM images
-  WHERE category is not null
-  GROUP BY category`;
+  let sql = `SELECT  category, count(category) FROM images GROUP BY category HAVING COUNT(category)>20`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere 3", Error: err });
-    let s = JSON.stringify(result);
-    let r = [];
-    let j = JSON.parse(s);
-    c = j[1]["count(category)"];
-    console.log(j);
-    // c.map(x=>)
-    r = j.filter((x) => x["count(category)"] > 20);
-    res.json(r);
+    res.json(result);
   });
 };
 
+// exports.category = (req, res) => {
+//   let sql = `SELECT category,url, ROW_NUMBER() OVER (Partition By category) FROM images LIMIT 1`;
+//   db.query(sql, (err, result) => {
+//     if (err) return res.json({ error: "Error everywhere 3", Error: err });
+//     res.json(result);
+//   });
+// };
+
 exports.leaderboard = (req, res) => {
   let sql = `SELECT *
-  FROM images ORDER BY votes DESC LIMIT 5 OFFSET ${req.body.offset}`;
+  FROM images ORDER BY votes DESC LIMIT 20 OFFSET ${req.body.offset}`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere 4", Error: err });
     res.json(result);
@@ -106,7 +104,7 @@ exports.profile = (req, res) => {
 exports.profilePosts = (req, res) => {
   let sql = `SELECT * FROM images WHERE user_id=${req.body.user_id}`;
   db.query(sql, (err, result) => {
-    if (err) return res.json({ error: "Error everywhere 5", Error: err });
+    if (err) return res.json({ error: "Error everywhere 6", Error: err });
     res.json(result);
   });
 };
@@ -114,7 +112,7 @@ exports.profilePosts = (req, res) => {
 exports.explore = (req, res) => {
   let sql = `SELECT image_id,user.user_id,url,votes,description,date,category,name FROM images INNER JOIN user ON user.user_id=images.user_id ORDER BY RAND()`;
   db.query(sql, (err, result) => {
-    if (err) return res.json({ error: "Error everywhere 6", Error: err });
+    if (err) return res.json({ error: "Error everywhere 7", Error: err });
     res.json(result);
   });
 };

@@ -15,7 +15,7 @@ const {
 } = require("./controller");
 
 const app = express();
-const port = process.env.PORT || 6969;
+const port = process.env.PORT || 8990;
 app.use(cors());
 app.use(bodyParser.json());
 
