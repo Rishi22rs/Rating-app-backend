@@ -12,6 +12,7 @@ const {
   profilePosts,
   login,
   explore,
+  view,
 } = require("./controller");
 
 const app = express();
@@ -22,12 +23,13 @@ app.use(bodyParser.json());
 app.get("/", (req, res) => {
   res.send("Hello Raters!");
 });
-app.post("/login", login);
+app.post("/login", isLoggedIn, login);
 app.post("/addImages", addImages);
-app.post("/random", isLoggedIn, selectRandom);
+app.post("/random", selectRandom);
 app.post("/vote", isLoggedIn, vote);
+app.post("/view", isLoggedIn, view);
 app.get("/category", isLoggedIn, category);
-app.post("/leaderboard", isLoggedIn, leaderboard);
+app.post("/leaderboard", leaderboard);
 app.get("/profile", isLoggedIn, profile);
 app.post("/profilePosts", isLoggedIn, profilePosts);
 app.get("/explore", isLoggedIn, explore);

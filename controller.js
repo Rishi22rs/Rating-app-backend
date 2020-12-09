@@ -20,22 +20,29 @@ exports.addImages = (req, res) => {
 };
 
 exports.login = (req, res) => {
-  console.log(req.body.email, req.body.password);
-  let sql = `SELECT user_id,name,email FROM user WHERE email=? AND pass=?`;
-  db.query(sql, [req.body.email, req.body.password], (err, result) => {
-    if (err) return res.json({ error: "Login error" });
+  let sql = `SELECT user_id,name,email FROM user WHERE email='${req.auth.email}'`;
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ error: "Login error", err });
+    console.log(result.length);
     if (result.length < 1) {
-      return res.json({ err: "Login failed" });
+      console.log("into it");
+      let sql1 = `INSERT INTO user (name,email) VALUES(?,?)`;
+      db.query(sql1, [req.auth.name, req.auth.email], (errr, resultt) => {
+        if (errr) return res.json({ error: "Signup error", errr });
+        res.json(resultt);
+      });
+      //return res.json({ msg: "Login first time" });
     }
-    const token = jwt.sign(
-      {
-        email: result[0].email,
-        user_id: result[0].user_id,
-      },
-      "rating"
-    );
-    result[0]["token"] = token;
-    res.json(result[0]);
+    //res.json(result);
+    //   const token = jwt.sign(
+    //     {
+    //       email: result[0].email,
+    //       user_id: result[0].user_id,
+    //     },
+    //     "rating"
+    //   );
+    //   result[0]["token"] = token;
+    //   res.json(result[0]);
   });
 };
 
@@ -64,6 +71,14 @@ exports.vote = (req, res) => {
   WHERE image_id=${req.body.image_id}`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere 2", Error: err });
+    res.json(result);
+  });
+};
+
+exports.view = (req, res) => {
+  let sql = `UPDATE images SET views = views+1 WHERE image_id=${req.body.image_id1};UPDATE images SET views = views+1 WHERE image_id=${req.body.image_id2};`;
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ error: "Error everywhere 2.5", Error: err });
     res.json(result);
   });
 };
