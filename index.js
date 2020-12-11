@@ -28,11 +28,11 @@ app.post("/addImages", addImages);
 app.post("/random", selectRandom);
 app.post("/vote", isLoggedIn, vote);
 app.post("/view", isLoggedIn, view);
-app.get("/category", isLoggedIn, category);
+app.get("/category", category);
 app.post("/leaderboard", leaderboard);
 app.get("/profile", isLoggedIn, profile);
 app.post("/profilePosts", isLoggedIn, profilePosts);
-app.get("/explore", isLoggedIn, explore);
+app.get("/explore", explore);
 
 app.listen(port, () => {
   console.log(`Rating-backend listening at http://localhost:${port}`);

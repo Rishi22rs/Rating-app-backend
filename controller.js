@@ -29,9 +29,11 @@ exports.login = (req, res) => {
       let sql1 = `INSERT INTO user (name,email) VALUES(?,?)`;
       db.query(sql1, [req.auth.name, req.auth.email], (errr, resultt) => {
         if (errr) return res.json({ error: "Signup error", errr });
-        res.json(resultt);
+        res.json({ ...resultt, newUser: "true" });
       });
       //return res.json({ msg: "Login first time" });
+    } else {
+      res.json({ ...result, newUser: "false" });
     }
     //res.json(result);
     //   const token = jwt.sign(
