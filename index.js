@@ -13,6 +13,8 @@ const {
   login,
   explore,
   view,
+  addComment,
+  getComments,
 } = require("./controller");
 
 const app = express();
@@ -33,6 +35,8 @@ app.post("/leaderboard", leaderboard);
 app.get("/profile", isLoggedIn, profile);
 app.post("/profilePosts", isLoggedIn, profilePosts);
 app.get("/explore", explore);
+app.post("/addComment", isLoggedIn, addComment);
+app.post("/getComments", getComments);
 
 app.listen(port, () => {
   console.log(`Rating-backend listening at http://localhost:${port}`);

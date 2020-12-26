@@ -133,3 +133,22 @@ exports.explore = (req, res) => {
     res.json(result);
   });
 };
+
+exports.addComment = (req, res) => {
+  let sql = `INSERT INTO comments(image_id,user_id,comment) VALUES(?,?,?)`;
+  db.query(
+    sql,
+    [req.body.image_id, req.body.user_id, req.body.comment],
+    (err, result) => {
+      if (err) return res.json({ error: "Error everywhere 8", Error: err });
+      res.json(result);
+    }
+  );
+};
+exports.getComments = (req, res) => {
+  let sql = `SELECT * FROM comments INNER JOIN user ON comments.user_id=user.user_id WHERE image_id=?`;
+  db.query(sql, [req.body.image_id], (err, result) => {
+    if (err) return res.json({ error: "Error everywhere 9", Error: err });
+    res.json(result);
+  });
+};
