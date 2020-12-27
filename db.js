@@ -6,6 +6,7 @@ var db = mysql.createConnection({
   user: "ratingpics",
   database: "rating",
   password: "ratingapp",
+  multipleStatements: true,
 });
 
 // var db = mysql.createConnection({
