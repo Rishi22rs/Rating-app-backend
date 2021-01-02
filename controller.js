@@ -21,7 +21,7 @@ exports.addImages = (req, res) => {
     db.query(
       sql,
       [
-        `http://ratepics.netlify.app/${salt + file.name}`,
+        `https://ratingpics.herokuapp.com/${salt + file.name}`,
         req.body.category,
         req.body.description,
       ],
@@ -175,3 +175,6 @@ exports.getComments = (req, res) => {
     res.json(result);
   });
 };
+
+//https://ratepics.netlify.app/1609588931172ZfUMrt.jpg
+//https://ratingpics.herokuapp.com/1609427488373logo11.png
