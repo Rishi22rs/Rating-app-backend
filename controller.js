@@ -1,22 +1,45 @@
 const db = require("./db");
-var jwt = require("jsonwebtoken");
 
 exports.addImages = (req, res) => {
-  let sql = `INSERT INTO images (url,category) VALUES(?,?)`;
-  let c = 0;
-  db.query(sql, [req.body.url, req.body.category], (err, result) => {
-    if (err)
-      return res.json({ error: "Error in adding the image", Error: err });
-    let count = `SELECT COUNT(url)
-    FROM images;`;
-    db.query(count, (err, result) => {
-      if (err) return res.json({ error: "Some error" });
-      let s = JSON.stringify(result);
-      let j = JSON.parse(s);
-      c = j[0]["COUNT(url)"];
-      res.json({ count: c });
+  if (req.files === null) {
+    res.status(400).json({ err: "No file uploaded." });
+  }
+  console.log(req);
+  const salt = Date.now();
+  if (req.files) {
+    const file = req.files.fileData;
+    file.mv(`${__dirname}/${salt + file.name}`, (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json(err);
+      }
+      console.log(file);
     });
-  });
+
+    let sql = `INSERT INTO images (url,category,description) VALUES(?,?,?)`;
+    let c = 0;
+    db.query(
+      sql,
+      [
+        `http://ratepics.netlify.app/${salt + file.name}`,
+        req.body.category,
+        req.body.description,
+      ],
+      (err, result) => {
+        if (err)
+          return res.json({ error: "Error in adding the image", Error: err });
+        let count = `SELECT COUNT(url)
+    FROM images;`;
+        db.query(count, (err, result) => {
+          if (err) return res.json({ error: "Some error" });
+          let s = JSON.stringify(result);
+          let j = JSON.parse(s);
+          c = j[0]["COUNT(url)"];
+          res.json({ count: c });
+        });
+      }
+    );
+  }
 };
 
 exports.login = (req, res) => {

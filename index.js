@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const isLoggedIn = require("./auth");
+var upload = require("express-fileupload");
 const {
   addImages,
   selectRandom,
@@ -17,10 +18,13 @@ const {
   getComments,
 } = require("./controller");
 
-const app = express();
 const port = process.env.PORT || 6969;
+const app = express();
+
+app.use(upload());
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static(__dirname));
 
 app.get("/", (req, res) => {
   res.send("Hello Raters!");
