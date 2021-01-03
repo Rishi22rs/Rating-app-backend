@@ -1,27 +1,27 @@
 const db = require("./db");
+const API = `https://ratingpics.herokuapp.com/`;
+//const API = `http://localhost:6969/`;
 
 exports.addImages = (req, res) => {
   if (req.files === null) {
     res.status(400).json({ err: "No file uploaded." });
   }
-  console.log(req);
   const salt = Date.now();
   if (req.files) {
     const file = req.files.fileData;
     file.mv(`${__dirname}/${salt + file.name}`, (err) => {
       if (err) {
-        console.log(err);
         return res.status(500).json(err);
       }
-      console.log(file);
     });
 
-    let sql = `INSERT INTO images (url,category,description) VALUES(?,?,?)`;
+    let sql = `INSERT INTO images (user_id,url,category,description) VALUES(?,?,?,?)`;
     let c = 0;
     db.query(
       sql,
       [
-        `https://ratingpics.herokuapp.com/${salt + file.name}`,
+        req.body.user_id,
+        `${API}${salt + file.name}`,
         req.body.category,
         req.body.description,
       ],
@@ -46,9 +46,7 @@ exports.login = (req, res) => {
   let sql = `SELECT user_id,name,email FROM user WHERE email='${req.auth.email}'`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Login error", err });
-    console.log(result.length);
     if (result.length < 1) {
-      console.log("into it");
       let sql1 = `INSERT INTO user (name,email) VALUES(?,?)`;
       db.query(sql1, [req.auth.name, req.auth.email], (errr, resultt) => {
         if (errr) return res.json({ error: "Signup error", errr });
@@ -56,6 +54,7 @@ exports.login = (req, res) => {
       });
       //return res.json({ msg: "Login first time" });
     } else {
+      console.log(result);
       res.json({ ...result, newUser: "false" });
     }
     //res.json(result);
@@ -142,6 +141,7 @@ exports.profile = (req, res) => {
 };
 
 exports.profilePosts = (req, res) => {
+  console.log(req.body.user_id);
   let sql = `SELECT * FROM images WHERE user_id=${req.body.user_id}`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere 6", Error: err });
