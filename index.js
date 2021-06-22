@@ -16,6 +16,8 @@ const {
   view,
   addComment,
   getComments,
+  userDetails,
+  getUserDetails,
 } = require("./controller");
 
 const port = process.env.PORT || 6969;
@@ -30,7 +32,7 @@ app.get("/", (req, res) => {
   res.send("Hello Raters!");
 });
 app.post("/login", isLoggedIn, login);
-app.post("/addImages", addImages);
+app.post("/addImages", isLoggedIn, addImages);
 app.post("/random", selectRandom);
 app.post("/vote", isLoggedIn, vote);
 app.post("/view", isLoggedIn, view);
@@ -41,6 +43,8 @@ app.post("/profilePosts", isLoggedIn, profilePosts);
 app.get("/explore", explore);
 app.post("/addComment", isLoggedIn, addComment);
 app.post("/getComments", getComments);
+app.post("/userDetails", isLoggedIn, userDetails);
+app.post("/getUserDetails", getUserDetails);
 
 app.listen(port, () => {
   console.log(`Rating-backend listening at http://localhost:${port}`);

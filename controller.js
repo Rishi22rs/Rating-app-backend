@@ -1,6 +1,6 @@
 const db = require("./db");
-const API = `https://ratingpics.herokuapp.com/`;
-//const API = `http://localhost:6969/`;
+//const API = `https://ratingpics.herokuapp.com/`;
+const API = `http://localhost:6969/`;
 
 exports.addImages = (req, res) => {
   if (req.files === null) {
@@ -54,7 +54,6 @@ exports.login = (req, res) => {
       });
       //return res.json({ msg: "Login first time" });
     } else {
-      console.log(result);
       res.json({ ...result, newUser: "false" });
     }
     //res.json(result);
@@ -75,7 +74,15 @@ exports.selectRandom = (req, res) => {
   ORDER BY RAND()
   LIMIT 2 
   `;
-  db.query(sql, (err, result) => {
+  let sql1 = `SELECT * FROM images INNER JOIN user ON images.user_id=user.user_id ORDER BY RAND() LIMIT 2`;
+
+  let msql = sql;
+
+  if (req.body.category == "Open Battle") {
+    msql = sql1;
+  }
+
+  db.query(msql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere", Error: err });
     // let sql1 = `SELECT * FROM images WHERE votes<=${result[0].votes} AND uid!=${result[0].uid}
     //   ORDER BY RAND()
@@ -141,7 +148,7 @@ exports.profile = (req, res) => {
 };
 
 exports.profilePosts = (req, res) => {
-  console.log(req.body.user_id);
+  console.log("posts", req.body.user_id);
   let sql = `SELECT * FROM images WHERE user_id=${req.body.user_id}`;
   db.query(sql, (err, result) => {
     if (err) return res.json({ error: "Error everywhere 6", Error: err });
@@ -176,5 +183,25 @@ exports.getComments = (req, res) => {
   });
 };
 
-//https://ratepics.netlify.app/1609588931172ZfUMrt.jpg
-//https://ratingpics.herokuapp.com/1609427488373logo11.png
+exports.userDetails = (req, res) => {
+  let sql = `INSERT INTO userdetails(user_id,username,bio,dob) VALUE(?,?,?,?)`;
+  let sql1 = `UPDATE userDetails SET username=?,bio=?,dob=? WHERE user_id=?`;
+
+  db.query(
+    sql1,
+    [req.body.username, req.body.bio, req.body.dob, req.body.user_id],
+    (err, result) => {
+      if (err) return res.json({ error: "Error everywhere 10", Error: err });
+      res.json(result);
+    }
+  );
+};
+
+exports.getUserDetails = (req, res) => {
+  console.log(req.body.user_id);
+  let sql = `SELECT * FROM userdetails WHERE user_id=?`;
+  db.query(sql, [req.body.user_id], (err, result) => {
+    if (err) return res.json({ error: "Error everywhere 11", Error: err });
+    res.json(result);
+  });
+};
